@@ -1,16 +1,29 @@
 services:
-    app:
-      container_name: app
+    pharmacy_reports_node1:
+      container_name: pharmacy_reports_node1
       build:
         dockerfile: ./Dockerfile
       command:
         - "make"
         - "run"
       restart: always
-      ports:
-        - 8000:8000
       env_file:
         - .env
+      networks:
+        - pharmacy_reports
+
+    pharmacy_reports_node2:
+      container_name: pharmacy_reports_node2
+      build:
+        dockerfile: ./Dockerfile
+      command:
+        - "make"
+        - "run"
+      restart: always
+      env_file:
+        - .env
+      networks:
+        - pharmacy_reports
 
     db:
         image: postgres:16.2
@@ -23,7 +36,29 @@ services:
           POSTGRES_DB: pharmacy_reports
         volumes:
           - db:/var/lib/postgresql/data
+        networks:
+          - pharmacy_reports
+
+    nginx_reports:
+      image: nginx:latest
+      volumes:
+        - /opt/homebrew/etc/nginx/reports_nginx.conf:/etc/nginx/nginx.conf
+      ports:
+        - 8080:80
+      depends_on:
+        - pharmacy_reports_node1
+        - pharmacy_reports_node2
+      networks:
+        - pharmacy_reports
+        - pharmacy_gateway
+
 
 volumes:
   db:
     driver: local
+
+networks:
+  pharmacy_reports:
+    driver: bridge
+  pharmacy_gateway:
+    external: true
