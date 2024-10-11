@@ -43,8 +43,6 @@ services:
       image: nginx:latest
       volumes:
         - /opt/homebrew/etc/nginx/reports_nginx.conf:/etc/nginx/nginx.conf
-      ports:
-        - 8080:80
       depends_on:
         - pharmacy_reports_node1
         - pharmacy_reports_node2
