@@ -26,18 +26,18 @@ services:
         - pharmacy_reports
 
     db:
-        image: postgres:16.2
-        container_name: db
-        restart: always
-        shm_size: 128mb
-        environment:
-          POSTGRES_PASSWORD: 1234
-          POSTGRES_USER: symon
-          POSTGRES_DB: pharmacy_reports
-        volumes:
-          - db:/var/lib/postgresql/data
-        networks:
-          - pharmacy_reports
+      image: postgres:16.2
+      container_name: pharmacy_reports_db
+      restart: always
+      shm_size: 128mb
+      environment:
+        POSTGRES_PASSWORD: 1234
+        POSTGRES_USER: symon
+        POSTGRES_DB: pharmacy_reports
+      volumes:
+        - db:/var/lib/postgresql/data
+      networks:
+        - pharmacy_reports
 
     nginx_reports:
       image: nginx:latest
@@ -48,7 +48,7 @@ services:
         - pharmacy_reports_node2
       networks:
         - pharmacy_reports
-        - pharmacy_gateway
+        - pharmacy_auth_gateway
 
 
 volumes:
@@ -58,5 +58,5 @@ volumes:
 networks:
   pharmacy_reports:
     driver: bridge
-  pharmacy_gateway:
+  pharmacy_auth_gateway:
     external: true
